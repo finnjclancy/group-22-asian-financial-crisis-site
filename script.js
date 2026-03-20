@@ -1,8 +1,8 @@
 const countryMeta = {
-  TH: { name: "Thailand", color: "#1e2435" },
-  ID: { name: "Indonesia", color: "#ab2c27" },
-  KR: { name: "South Korea", color: "#1a6f6d" },
-  MY: { name: "Malaysia", color: "#6b7248" },
+  TH: { name: "Thailand", color: "#1e2435", flag: "🇹🇭" },
+  ID: { name: "Indonesia", color: "#ab2c27", flag: "🇮🇩" },
+  KR: { name: "South Korea", color: "#1a6f6d", flag: "🇰🇷" },
+  MY: { name: "Malaysia", color: "#6b7248", flag: "🇲🇾" },
 }
 
 const rawSeries = {
@@ -319,11 +319,19 @@ const timelinePanelEl = document.querySelector("#timelinePanel")
 const metricButtonsEl = document.querySelector("#metricButtons")
 const yearSliderEl = document.querySelector("#yearSlider")
 const yearValueEl = document.querySelector("#yearValue")
+const yearPrevEl = document.querySelector("#yearPrev")
+const yearNextEl = document.querySelector("#yearNext")
 const countryLegendEl = document.querySelector("#countryLegend")
 const snapshotGridEl = document.querySelector("#snapshotGrid")
 const chartNoteEl = document.querySelector("#chartNote")
 const responseModesEl = document.querySelector("#responseModes")
 const responsePanelEl = document.querySelector("#responsePanel")
+const responsePrevEl = document.querySelector("#responsePrev")
+const responseNextEl = document.querySelector("#responseNext")
+const responseProgressEl = document.querySelector("#responseProgress")
+const metricWallPrevEl = document.querySelector("#metricWallPrev")
+const metricWallNextEl = document.querySelector("#metricWallNext")
+const metricWallProgressEl = document.querySelector("#metricWallProgress")
 const chartSvg = document.querySelector("#impactChart")
 const tooltipEl = document.querySelector("#chartTooltip")
 const chartPanelEl = document.querySelector(".chart-panel")
@@ -332,13 +340,18 @@ const yearCompareChartEl = document.querySelector("#yearCompareChart")
 const yearCompareRankingEl = document.querySelector("#yearCompareRanking")
 const yearCompareNoteEl = document.querySelector("#yearCompareNote")
 const countryProfileButtonsEl = document.querySelector("#countryProfileButtons")
+const countryProfilePrevEl = document.querySelector("#countryProfilePrev")
+const countryProfileNextEl = document.querySelector("#countryProfileNext")
+const countryProfileProgressEl = document.querySelector("#countryProfileProgress")
 const countryProfileHeadEl = document.querySelector("#countryProfileHead")
 const countryMetricWallEl = document.querySelector("#countryMetricWall")
 const heatmapGridEl = document.querySelector("#heatmapGrid")
 const heatmapLegendEl = document.querySelector("#heatmapLegend")
 const heatmapNoteEl = document.querySelector("#heatmapNote")
-const contagionTrackEl = document.querySelector("#contagionTrack")
 const contagionPanelEl = document.querySelector("#contagionPanel")
+const contagionPrevEl = document.querySelector("#contagionPrev")
+const contagionNextEl = document.querySelector("#contagionNext")
+const siteHeaderEl = document.querySelector(".site-header")
 
 let selectedFault = faults[0].id
 let selectedTimeline = timelineEvents[2].id
@@ -416,6 +429,10 @@ function rgba(hex, alpha) {
   const g = Number.parseInt(clean.slice(2, 4), 16)
   const b = Number.parseInt(clean.slice(4, 6), 16)
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+function countryLabel(code) {
+  return `<span class="flag-inline" aria-hidden="true">${countryMeta[code].flag}</span>${countryMeta[code].name}`
 }
 
 function getHeatmapColor(metricKey, value, domain) {
@@ -516,23 +533,62 @@ function renderTimeline() {
   })
 }
 
+function getContagionLabel(id) {
+  const labels = {
+    thailand: `${countryMeta.TH.flag} Thailand`,
+    philippines: "🇵🇭 Philippines",
+    malaysia: `${countryMeta.MY.flag} Malaysia`,
+    indonesia: `${countryMeta.ID.flag} Indonesia`,
+    korea: `${countryMeta.KR.flag} South Korea`,
+  }
+  return labels[id] || id
+}
+
+function getContagionRole(id) {
+  const roles = {
+    thailand: "Trigger point",
+    philippines: "Early regional pressure",
+    malaysia: "Policy divergence",
+    indonesia: "Deepest collapse",
+    korea: "Financing shock",
+  }
+  return roles[id] || ""
+}
+
 function renderContagion() {
   const current = contagionStates.find(item => item.id === selectedContagion)
+  const activeIndex = contagionStates.findIndex(item => item.id === selectedContagion)
+
   contagionPanelEl.innerHTML = `
-    <h3>${current.title}</h3>
+    <h3>${getContagionLabel(current.id)}: ${current.title.split(": ")[1] || current.title}</h3>
     <p>${current.summary}</p>
     <div class="contagion-meta">
       ${current.meta.map(item => `<span>${item}</span>`).join("")}
     </div>
+    <div class="contagion-progress" aria-label="Contagion progress">
+      ${contagionStates
+        .map(
+          item => `
+            <button class="contagion-progress-dot${item.id === selectedContagion ? " is-active" : ""}" type="button" data-contagion-dot="${item.id}" aria-label="Show ${getContagionLabel(item.id)}"></button>
+          `
+        )
+        .join("")}
+    </div>
   `
 
-  contagionTrackEl.querySelectorAll("[data-contagion]").forEach(button => {
-    button.classList.toggle("is-active", button.dataset.contagion === selectedContagion)
+  contagionPanelEl.querySelectorAll("[data-contagion-dot]").forEach(button => {
     button.onclick = () => {
-      selectedContagion = button.dataset.contagion
+      selectedContagion = button.dataset.contagionDot
       renderContagion()
     }
   })
+}
+
+function rotateContagion(step) {
+  const currentIndex = contagionStates.findIndex(item => item.id === selectedContagion)
+  const nextIndex = (currentIndex + step + contagionStates.length) % contagionStates.length
+  selectedContagion = contagionStates[nextIndex].id
+  renderContagion()
 }
 
 function renderMetricButtons() {
@@ -566,7 +622,7 @@ function renderLegend() {
           aria-pressed="${activeCountries.has(code)}"
           style="--legend-color:${countryMeta[code].color}"
         >
-          ${countryMeta[code].name}
+          ${countryLabel(code)}
         </button>
       `
     )
@@ -741,9 +797,9 @@ function renderSnapshots() {
     .map(code => {
       const series = rawSeries[code][selectedYear]
       return `
-        <article class="snapshot-card">
+        <article class="snapshot-card" style="--country-color:${countryMeta[code].color}; --country-soft:${rgba(countryMeta[code].color, 0.08)}">
           <div class="snapshot-header">
-            <h3>${countryMeta[code].name}</h3>
+            <h3>${countryLabel(code)}</h3>
             <span class="swatch" style="background:${countryMeta[code].color}"></span>
           </div>
           <div class="snapshot-main">
@@ -765,7 +821,10 @@ function renderSnapshots() {
 
 function renderMetricWall() {
   const codes = Array.from(activeCountries)
-  metricWallEl.innerHTML = Object.entries(metrics)
+  const metricEntries = Object.entries(metrics)
+  const activeIndex = metricEntries.findIndex(([metricKey]) => metricKey === selectedMetric)
+
+  metricWallEl.innerHTML = metricEntries
     .map(
       ([metricKey, metric]) => `
         <button class="metric-mini-card" type="button" data-wall-metric="${metricKey}" aria-pressed="${metricKey === selectedMetric}">
@@ -776,12 +835,21 @@ function renderMetricWall() {
             </div>
             <div class="mini-card-value">
               <strong>${displayMetricValue(metricKey, rawSeries[selectedProfileCountry][selectedYear][metricKey])}</strong>
-              <span>${countryMeta[selectedProfileCountry].name}</span>
+              <span>${countryLabel(selectedProfileCountry)}</span>
             </div>
           </div>
           <svg class="mini-svg" data-mini-svg="${metricKey}" role="img" aria-label="${metric.label} mini chart"></svg>
           <div class="mini-note">${metric.note}</div>
         </button>
+      `
+    )
+    .join("")
+  metricWallEl.style.transform = `translateX(-${activeIndex * 100}%)`
+
+  metricWallProgressEl.innerHTML = metricEntries
+    .map(
+      ([metricKey, metric]) => `
+        <button class="response-progress-dot${metricKey === selectedMetric ? " is-active" : ""}" type="button" data-wall-dot="${metricKey}" aria-label="Show ${metric.label}"></button>
       `
     )
     .join("")
@@ -808,6 +876,14 @@ function renderMetricWall() {
       renderImpactViews()
     })
   })
+
+  metricWallProgressEl.querySelectorAll("[data-wall-dot]").forEach(button => {
+    button.addEventListener("click", () => {
+      selectedMetric = button.dataset.wallDot
+      renderMetricButtons()
+      renderImpactViews()
+    })
+  })
 }
 
 function renderYearCompare() {
@@ -820,13 +896,13 @@ function renderYearCompare() {
   const padding = range * 0.16
   const domain = { min: minValue - padding, max: maxValue + padding }
   const width = 760
-  const height = 330
-  const margin = { top: 18, right: 20, bottom: 58, left: 56 }
+  const height = 258
+  const margin = { top: 16, right: 18, bottom: 46, left: 54 }
   const innerWidth = width - margin.left - margin.right
   const innerHeight = height - margin.top - margin.bottom
   const zeroY = margin.top + (1 - (0 - domain.min) / (domain.max - domain.min || 1)) * innerHeight
   const step = innerWidth / codes.length
-  const barWidth = Math.min(92, step * 0.56)
+  const barWidth = Math.min(82, step * 0.5)
 
   yearCompareChartEl.setAttribute("viewBox", `0 0 ${width} ${height}`)
   yearCompareChartEl.innerHTML = ""
@@ -883,7 +959,7 @@ function renderYearCompare() {
 
     const valueLabel = createSvgNode("text", {
       x: x + barWidth / 2,
-      y: value >= 0 ? top - 8 : top + barHeight + 18,
+      y: value >= 0 ? top - 6 : top + barHeight + 15,
       "text-anchor": "middle",
       class: "bar-value",
     })
@@ -892,7 +968,7 @@ function renderYearCompare() {
 
     const countryLabel = createSvgNode("text", {
       x: x + barWidth / 2,
-      y: height - 18,
+      y: height - 12,
       "text-anchor": "middle",
       class: "bar-label",
     })
@@ -904,9 +980,9 @@ function renderYearCompare() {
   yearCompareRankingEl.innerHTML = ranked
     .map(
       (code, index) => `
-        <div class="ranking-row">
+        <div class="ranking-row" style="--country-color:${countryMeta[code].color}; --country-soft:${rgba(countryMeta[code].color, 0.08)}">
           <strong>${index + 1}</strong>
-          <span>${countryMeta[code].name}</span>
+          <span>${countryLabel(code)}</span>
           <strong>${displayMetricValue(metricKey, rawSeries[code][selectedYear][metricKey])}</strong>
         </div>
       `
@@ -917,19 +993,34 @@ function renderYearCompare() {
 }
 
 function renderCountryProfile() {
-  countryProfileButtonsEl.innerHTML = countryCodes
-    .filter(code => activeCountries.has(code))
+  const profileCodes = countryCodes.filter(code => activeCountries.has(code))
+  const activeIndex = profileCodes.findIndex(code => code === selectedProfileCountry)
+
+  countryProfileButtonsEl.innerHTML = profileCodes
     .map(
       code => `
         <button
-          class="legend-button"
+          class="profile-country-card"
           type="button"
           data-profile-country="${code}"
           aria-pressed="${code === selectedProfileCountry}"
-          style="--legend-color:${countryMeta[code].color}"
+          style="--country-color:${countryMeta[code].color}; --country-soft:${rgba(countryMeta[code].color, 0.08)}"
         >
-          ${countryMeta[code].name}
+          <div class="profile-country-card-head">
+            <strong>${countryLabel(code)}</strong>
+            <span class="profile-country-pill">${code}</span>
+          </div>
+          <span>Click to load ${countryMeta[code].name}'s full crisis profile.</span>
         </button>
+      `
+    )
+    .join("")
+  countryProfileButtonsEl.style.transform = `translateX(-${activeIndex * 100}%)`
+
+  countryProfileProgressEl.innerHTML = profileCodes
+    .map(
+      code => `
+        <button class="response-progress-dot${code === selectedProfileCountry ? " is-active" : ""}" type="button" data-profile-dot="${code}" aria-label="Show ${countryMeta[code].name}"></button>
       `
     )
     .join("")
@@ -943,6 +1034,15 @@ function renderCountryProfile() {
     })
   })
 
+  countryProfileProgressEl.querySelectorAll("[data-profile-dot]").forEach(button => {
+    button.addEventListener("click", () => {
+      selectedProfileCountry = button.dataset.profileDot
+      renderCountryProfile()
+      renderMetricWall()
+      renderHeatmap()
+    })
+  })
+
   const code = selectedProfileCountry
   const current = rawSeries[code][selectedYear]
   const gdpDrop = rawSeries[code][1998].gdp - rawSeries[code][1997].gdp
@@ -950,7 +1050,7 @@ function renderCountryProfile() {
 
   countryProfileHeadEl.innerHTML = `
     <div>
-      <strong>${countryMeta[code].name}</strong>
+      <strong>${countryLabel(code)}</strong>
       <p>Focused year: ${selectedYear}. This profile redraws every metric for a single country so you can see how one balance-sheet shock spread across output, prices, jobs, the current account, and the exchange rate.</p>
       <div class="profile-badges">
         <span class="profile-badge">1998 GDP shock: ${signedDisplay("gdp", gdpDrop)}</span>
@@ -960,6 +1060,8 @@ function renderCountryProfile() {
     </div>
     <span class="swatch" style="background:${countryMeta[code].color}; width:18px; height:18px;"></span>
   `
+  countryProfileHeadEl.style.setProperty("--country-color", countryMeta[code].color)
+  countryProfileHeadEl.style.setProperty("--country-soft", rgba(countryMeta[code].color, 0.08))
 
   countryMetricWallEl.innerHTML = Object.entries(metrics)
     .map(
@@ -987,14 +1089,33 @@ function renderCountryProfile() {
       metricKey,
       codes: [code],
       width: 340,
-      height: 180,
-      margin: { top: 14, right: 14, bottom: 22, left: 14 },
+      height: 132,
+      margin: { top: 12, right: 12, bottom: 18, left: 12 },
       showYLabels: false,
       showXLabels: false,
       interactive: false,
       highlightYear: selectedYear,
     })
   })
+}
+
+function rotateMetricWall(step) {
+  const metricKeys = Object.keys(metrics)
+  const currentIndex = metricKeys.findIndex(metricKey => metricKey === selectedMetric)
+  const nextIndex = (currentIndex + step + metricKeys.length) % metricKeys.length
+  selectedMetric = metricKeys[nextIndex]
+  renderMetricButtons()
+  renderImpactViews()
+}
+
+function rotateProfileCountry(step) {
+  const profileCodes = countryCodes.filter(code => activeCountries.has(code))
+  const currentIndex = profileCodes.findIndex(code => code === selectedProfileCountry)
+  const nextIndex = (currentIndex + step + profileCodes.length) % profileCodes.length
+  selectedProfileCountry = profileCodes[nextIndex]
+  renderCountryProfile()
+  renderMetricWall()
+  renderHeatmap()
 }
 
 function renderHeatmap() {
@@ -1021,7 +1142,7 @@ function renderHeatmap() {
 
   const rows = countryCodes
     .map(code => {
-      const cells = [`<div class="heatmap-cell row-header">${countryMeta[code].name}</div>`]
+      const cells = [`<div class="heatmap-cell row-header"><span class="flag-inline" aria-hidden="true">${countryMeta[code].flag}</span><span>${countryMeta[code].name}</span></div>`]
       years.forEach(year => {
         const value = rawSeries[code][year][selectedMetric]
         const activeClass = code === selectedProfileCountry && year === selectedYear ? " is-active" : ""
@@ -1035,7 +1156,7 @@ function renderHeatmap() {
             aria-label="${countryMeta[code].name} ${year} ${metrics[selectedMetric].label} ${compactMetricValue(selectedMetric, value)}"
           >
             <strong>${compactMetricValue(selectedMetric, value)}</strong>
-            <span>${countryMeta[code].name}</span>
+            <span>${countryLabel(code)}</span>
             <small>${heatmapSubLabel(selectedMetric, code, year)}</small>
           </button>
         `)
@@ -1050,10 +1171,7 @@ function renderHeatmap() {
   heatmapGridEl.querySelectorAll("[data-heatmap-country]").forEach(button => {
     button.addEventListener("click", () => {
       selectedProfileCountry = button.dataset.heatmapCountry
-      selectedYear = Number(button.dataset.heatmapYear)
-      yearSliderEl.value = String(selectedYear)
-      yearValueEl.textContent = String(selectedYear)
-      renderImpactViews()
+      setSelectedYear(Number(button.dataset.heatmapYear))
       scrollToMainGraph()
     })
   })
@@ -1069,6 +1187,14 @@ function renderImpactViews() {
   setupScrollAnimations()
 }
 
+function setSelectedYear(year) {
+  const boundedYear = Math.max(years[0], Math.min(years[years.length - 1], year))
+  selectedYear = boundedYear
+  yearSliderEl.value = String(boundedYear)
+  yearValueEl.textContent = String(boundedYear)
+  renderImpactViews()
+}
+
 function scrollToMainGraph() {
   if (!chartPanelEl) return
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -1082,7 +1208,7 @@ function showTooltip(event) {
   const target = event.currentTarget
   tooltipEl.hidden = false
   tooltipEl.innerHTML = `
-    <strong>${countryMeta[target.dataset.country].name} · ${target.dataset.year}</strong>
+    <strong>${countryLabel(target.dataset.country)} · ${target.dataset.year}</strong>
     <span>${metrics[selectedMetric].label}: ${displayMetricValue(selectedMetric, Number(target.dataset.value))}</span>
   `
 
@@ -1100,11 +1226,28 @@ function hideTooltip() {
 function renderResponses() {
   responseModesEl.innerHTML = responseModes
     .map(
-      item => `
+      (item, index) => `
         <button class="response-mode" type="button" data-response="${item.id}" aria-selected="${item.id === selectedResponse}">
+          <span class="response-mode-index">Card ${index + 1} of ${responseModes.length}</span>
           <strong>${item.title}</strong>
           <span>${item.summary}</span>
+          <span class="response-mode-cta">View policy breakdown</span>
         </button>
+      `
+    )
+    .join("")
+
+  const activeIndex = responseModes.findIndex(item => item.id === selectedResponse)
+  responseModesEl.style.transform = `translateX(-${activeIndex * 100}%)`
+  responseProgressEl.innerHTML = responseModes
+    .map(
+      item => `
+        <button
+          class="response-progress-dot${item.id === selectedResponse ? " is-active" : ""}"
+          type="button"
+          data-response-dot="${item.id}"
+          aria-label="Show ${item.title}"
+        ></button>
       `
     )
     .join("")
@@ -1134,14 +1277,89 @@ function renderResponses() {
       renderResponses()
     })
   })
+
+  responseProgressEl.querySelectorAll("[data-response-dot]").forEach(button => {
+    button.addEventListener("click", () => {
+      selectedResponse = button.dataset.responseDot
+      renderResponses()
+    })
+  })
+}
+
+function rotateResponses(step) {
+  const currentIndex = responseModes.findIndex(item => item.id === selectedResponse)
+  const nextIndex = (currentIndex + step + responseModes.length) % responseModes.length
+  selectedResponse = responseModes[nextIndex].id
+  renderResponses()
 }
 
 function attachYearControl() {
   yearSliderEl.addEventListener("input", event => {
-    selectedYear = Number(event.target.value)
-    yearValueEl.textContent = String(selectedYear)
-    renderImpactViews()
+    setSelectedYear(Number(event.target.value))
   })
+
+  yearPrevEl.addEventListener("click", () => {
+    setSelectedYear(selectedYear - 1)
+  })
+
+  yearNextEl.addEventListener("click", () => {
+    setSelectedYear(selectedYear + 1)
+  })
+
+  responsePrevEl.addEventListener("click", () => {
+    rotateResponses(-1)
+  })
+
+  responseNextEl.addEventListener("click", () => {
+    rotateResponses(1)
+  })
+
+  if (contagionPrevEl) {
+    contagionPrevEl.addEventListener("click", () => {
+      rotateContagion(-1)
+    })
+  }
+
+  if (contagionNextEl) {
+    contagionNextEl.addEventListener("click", () => {
+      rotateContagion(1)
+    })
+  }
+
+  if (metricWallPrevEl) {
+    metricWallPrevEl.addEventListener("click", () => {
+      rotateMetricWall(-1)
+    })
+  }
+
+  if (metricWallNextEl) {
+    metricWallNextEl.addEventListener("click", () => {
+      rotateMetricWall(1)
+    })
+  }
+
+  if (countryProfilePrevEl) {
+    countryProfilePrevEl.addEventListener("click", () => {
+      rotateProfileCountry(-1)
+    })
+  }
+
+  if (countryProfileNextEl) {
+    countryProfileNextEl.addEventListener("click", () => {
+      rotateProfileCountry(1)
+    })
+  }
+}
+
+function setupHeaderVisibility() {
+  if (!siteHeaderEl) return
+
+  const syncHeader = () => {
+    siteHeaderEl.classList.toggle("is-hidden", window.scrollY > 12)
+  }
+
+  syncHeader()
+  window.addEventListener("scroll", syncHeader, { passive: true })
 }
 
 function setupReveal() {
@@ -1216,7 +1434,6 @@ function setupScrollAnimations() {
 
   gsap.to(".hero-visual", {
     yPercent: -10,
-    rotate: -1.5,
     ease: "none",
     scrollTrigger: {
       id: "codex-scroll-hero-visual",
@@ -1245,7 +1462,7 @@ function setupScrollAnimations() {
     )
   })
 
-  gsap.utils.toArray(".metric-mini-card, .country-mini-card, .snapshot-card, .ranking-row, .heatmap-cell.data").forEach((element, index) => {
+  gsap.utils.toArray(".country-mini-card, .snapshot-card, .ranking-row, .heatmap-cell.data").forEach((element, index) => {
     gsap.fromTo(
       element,
       { autoAlpha: 0, y: 36 },
@@ -1264,6 +1481,37 @@ function setupScrollAnimations() {
     )
   })
 
+  gsap.utils.toArray("main > section").forEach((section, index) => {
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        id: `codex-scroll-section-zoom-${index}`,
+        trigger: section,
+        start: "top 92%",
+        end: "bottom 8%",
+        scrub: 1,
+      },
+    })
+
+    timeline
+      .fromTo(
+        section,
+        {
+          scale: index === 0 ? 1 : 0.982,
+          transformOrigin: "center top",
+        },
+        {
+          scale: 1,
+          ease: "none",
+          duration: 0.58,
+        }
+      )
+      .to(section, {
+        scale: 0.992,
+        ease: "none",
+        duration: 0.42,
+      })
+  })
+
   ScrollTrigger.refresh()
 }
 
@@ -1275,4 +1523,5 @@ renderLegend()
 renderImpactViews()
 renderResponses()
 attachYearControl()
+setupHeaderVisibility()
 setupReveal()

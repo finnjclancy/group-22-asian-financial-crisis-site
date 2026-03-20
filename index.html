@@ -67,34 +67,11 @@
             <div class="network-card">
               <div class="network-label">Crisis Contagion</div>
               <div class="network-grid contagion-sequence" aria-label="Crisis contagion sequence">
-                <p class="sequence-intro">
-                  Click a country to see what role it played in the crisis story.
-                </p>
-                <div class="sequence-track" id="contagionTrack">
-                  <button class="contagion-step is-active" type="button" data-contagion="thailand">
-                    <strong>Thailand</strong>
-                    <span>Trigger</span>
-                  </button>
-                  <span class="sequence-arrow" aria-hidden="true">→</span>
-                  <button class="contagion-step" type="button" data-contagion="philippines">
-                    <strong>Philippines</strong>
-                    <span>Early pressure</span>
-                  </button>
-                  <span class="sequence-arrow" aria-hidden="true">→</span>
-                  <button class="contagion-step" type="button" data-contagion="malaysia">
-                    <strong>Malaysia</strong>
-                    <span>Policy split</span>
-                  </button>
-                  <span class="sequence-arrow" aria-hidden="true">→</span>
-                  <button class="contagion-step" type="button" data-contagion="indonesia">
-                    <strong>Indonesia</strong>
-                    <span>Deepest collapse</span>
-                  </button>
-                  <span class="sequence-arrow" aria-hidden="true">→</span>
-                  <button class="contagion-step" type="button" data-contagion="korea">
-                    <strong>South Korea</strong>
-                    <span>Financing shock</span>
-                  </button>
+                <div class="contagion-carousel-head">
+                  <div class="contagion-nav">
+                    <button class="contagion-nav-button" id="contagionPrev" type="button" aria-label="Previous country">Prev</button>
+                    <button class="contagion-nav-button" id="contagionNext" type="button" aria-label="Next country">Next</button>
+                  </div>
                 </div>
                 <article class="contagion-panel" id="contagionPanel" aria-live="polite"></article>
               </div>
@@ -198,33 +175,47 @@
             </div>
             <div class="dashboard-controls">
               <div class="metric-group" id="metricButtons" aria-label="Metric selector"></div>
-              <div class="year-control">
+            </div>
+
+            <div class="chart-layout">
+              <div class="chart-stack">
+                <div class="chart-panel">
+                  <div class="legend-row" id="countryLegend" aria-label="Country selector"></div>
+                  <div class="chart-frame">
+                    <svg id="impactChart" viewBox="0 0 900 430" role="img" aria-label="Crisis comparison chart"></svg>
+                    <div id="chartTooltip" class="chart-tooltip" hidden></div>
+                  </div>
+                  <p class="chart-note" id="chartNote"></p>
+                </div>
+                <div class="snapshot-grid" id="snapshotGrid"></div>
+              </div>
+              <div class="year-control year-control-side">
                 <label for="yearSlider">Focus year</label>
                 <div class="year-readout">
                   <strong id="yearValue">1998</strong>
                   <span>Use the slider to inspect the crisis year by year.</span>
                 </div>
-                <input
-                  id="yearSlider"
-                  type="range"
-                  min="1995"
-                  max="2000"
-                  value="1998"
-                  step="1"
-                />
-              </div>
-            </div>
-
-            <div class="chart-layout">
-              <div class="chart-panel">
-                <div class="legend-row" id="countryLegend" aria-label="Country selector"></div>
-                <div class="chart-frame">
-                  <svg id="impactChart" viewBox="0 0 900 430" role="img" aria-label="Crisis comparison chart"></svg>
-                  <div id="chartTooltip" class="chart-tooltip" hidden></div>
+                <div class="year-stepper">
+                  <button type="button" class="year-step-button" id="yearPrev" aria-label="Previous year">Earlier</button>
+                  <input
+                    id="yearSlider"
+                    type="range"
+                    min="1995"
+                    max="2000"
+                    value="1998"
+                    step="1"
+                  />
+                  <button type="button" class="year-step-button" id="yearNext" aria-label="Next year">Later</button>
                 </div>
-                <p class="chart-note" id="chartNote"></p>
+                <div class="year-ticks" aria-hidden="true">
+                  <span>1995</span>
+                  <span>1996</span>
+                  <span>1997</span>
+                  <span>1998</span>
+                  <span>1999</span>
+                  <span>2000</span>
+                </div>
               </div>
-              <div class="snapshot-grid" id="snapshotGrid"></div>
             </div>
 
             <div class="impact-extras">
@@ -237,7 +228,17 @@
                   Each card is a separate graph. Click any one to switch the main
                   dashboard and comparison panels to that statistic.
                 </p>
-                <div class="metric-wall-grid" id="metricWall"></div>
+                <div class="mini-carousel-head">
+                  <p class="mini-carousel-copy">Use the arrows or dots to rotate through the five metric cards.</p>
+                  <div class="response-nav">
+                    <button class="response-nav-button" id="metricWallPrev" type="button" aria-label="Previous metric">Prev</button>
+                    <button class="response-nav-button" id="metricWallNext" type="button" aria-label="Next metric">Next</button>
+                  </div>
+                </div>
+                <div class="metric-wall-window">
+                  <div class="metric-wall-grid" id="metricWall"></div>
+                </div>
+                <div class="response-progress" id="metricWallProgress" aria-label="Metric wall progress"></div>
               </section>
 
               <div class="impact-secondary-grid">
@@ -249,7 +250,7 @@
                   <div class="chart-frame chart-frame-compact">
                     <svg
                       id="yearCompareChart"
-                      viewBox="0 0 760 330"
+                      viewBox="0 0 760 258"
                       role="img"
                       aria-label="Selected year comparison chart"
                     ></svg>
@@ -263,7 +264,17 @@
                     <p class="eyebrow">Country Profile</p>
                     <h3>One country, every statistic</h3>
                   </div>
-                  <div class="legend-row" id="countryProfileButtons" aria-label="Country profile selector"></div>
+                  <div class="mini-carousel-head">
+                    <p class="mini-carousel-copy">Rotate through the country cards to switch the full profile below.</p>
+                    <div class="response-nav">
+                      <button class="response-nav-button" id="countryProfilePrev" type="button" aria-label="Previous country">Prev</button>
+                      <button class="response-nav-button" id="countryProfileNext" type="button" aria-label="Next country">Next</button>
+                    </div>
+                  </div>
+                  <div class="profile-country-window">
+                    <div class="profile-country-grid" id="countryProfileButtons" aria-label="Country profile selector"></div>
+                  </div>
+                  <div class="response-progress" id="countryProfileProgress" aria-label="Country profile progress"></div>
                   <div class="country-profile-head" id="countryProfileHead"></div>
                   <div class="country-metric-grid" id="countryMetricWall"></div>
                 </section>
@@ -292,7 +303,25 @@
             <h2>Stabilisation came with trade-offs, and Malaysia chose a different route</h2>
           </div>
           <div class="responses-layout">
-            <div class="response-modes" id="responseModes" aria-label="Response comparison"></div>
+            <section class="panel response-carousel-panel">
+              <div class="response-carousel-head">
+                <div>
+                  <p class="eyebrow">Interactive Cards</p>
+                  <h3>Rotate Through The Policy Paths</h3>
+                </div>
+                <div class="response-nav" aria-label="Response card navigation">
+                  <button class="response-nav-button" id="responsePrev" type="button" aria-label="Previous response card">
+                    Prev
+                  </button>
+                  <button class="response-nav-button" id="responseNext" type="button" aria-label="Next response card">
+                    Next
+                  </button>
+                </div>
+              </div>
+              <p class="response-hint">Tap the card or use the arrows to rotate through the response paths.</p>
+              <div class="response-modes" id="responseModes" aria-label="Response comparison cards"></div>
+              <div class="response-progress" id="responseProgress" aria-label="Response card progress"></div>
+            </section>
             <article class="response-panel panel" id="responsePanel" aria-live="polite"></article>
           </div>
         </section>
