@@ -1,0 +1,11 @@
+.DS_Store
+site_preview*.png
+impact_preview*.png
+dashboard_preview*.png
+gsap_preview*.png
+hero_contagion*.png
+*_preview*.png
+generated_assets/
+build_asian_crisis_ppt.py
+*.pdf
+*.pptx

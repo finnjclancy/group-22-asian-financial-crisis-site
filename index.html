@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Asian Financial Crisis, 1997-1998</title>
+    <meta
+      name="description"
+      content="An interactive companion website for a report on the 1997-1998 Asian Financial Crisis."
+    />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#top">
+          <span class="brand-mark">1997</span>
+          <span class="brand-copy">
+            <strong>Asian Financial Crisis</strong>
+            <small>Interactive report companion · Group 22</small>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#introduction">Introduction</a>
+          <a href="#causes">Causes</a>
+          <a href="#impact">Impact</a>
+          <a href="#responses">Responses</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="hero section reveal is-visible">
+          <div class="hero-copy">
+            <p class="eyebrow">Financial Markets and Institutions</p>
+            <h1>The Crisis That Broke the East Asian Growth Story</h1>
+            <p class="lede">
+              In July 1997, Thailand abandoned the baht’s dollar peg. What followed
+              was not a contained currency shock but a regional financial crisis that
+              exposed dollar debt, weak regulation, and the limits of fixed exchange
+              rates.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button button-primary" href="#impact">Explore The Dashboard</a>
+              <a class="button button-secondary" href="#sources">View Sources</a>
+            </div>
+
+            <div class="authors">
+              <span class="group-pill">Group 22</span>
+              <span>Arthur REICHARD</span>
+              <span>CHAN Yu Hin, Danny</span>
+              <span>Kanav CHOPRA</span>
+              <span>Finnegan CLANCY</span>
+              <span>James COYLE</span>
+            </div>
+          </div>
+
+          <div class="hero-visual">
+            <div class="network-card">
+              <div class="network-label">Crisis Contagion</div>
+              <div class="network-grid contagion-sequence" aria-label="Crisis contagion sequence">
+                <p class="sequence-intro">
+                  Click a country to see what role it played in the crisis story.
+                </p>
+                <div class="sequence-track" id="contagionTrack">
+                  <button class="contagion-step is-active" type="button" data-contagion="thailand">
+                    <strong>Thailand</strong>
+                    <span>Trigger</span>
+                  </button>
+                  <span class="sequence-arrow" aria-hidden="true">→</span>
+                  <button class="contagion-step" type="button" data-contagion="philippines">
+                    <strong>Philippines</strong>
+                    <span>Early pressure</span>
+                  </button>
+                  <span class="sequence-arrow" aria-hidden="true">→</span>
+                  <button class="contagion-step" type="button" data-contagion="malaysia">
+                    <strong>Malaysia</strong>
+                    <span>Policy split</span>
+                  </button>
+                  <span class="sequence-arrow" aria-hidden="true">→</span>
+                  <button class="contagion-step" type="button" data-contagion="indonesia">
+                    <strong>Indonesia</strong>
+                    <span>Deepest collapse</span>
+                  </button>
+                  <span class="sequence-arrow" aria-hidden="true">→</span>
+                  <button class="contagion-step" type="button" data-contagion="korea">
+                    <strong>South Korea</strong>
+                    <span>Financing shock</span>
+                  </button>
+                </div>
+                <article class="contagion-panel" id="contagionPanel" aria-live="polite"></article>
+              </div>
+              <div class="network-foot">
+                The contagion moved through exchange rates, external debt, and investor confidence. The main dashboard below focuses on the four countries with the full data series used in your project.
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-stats">
+            <article class="stat-card">
+              <p class="stat-label">Trigger Date</p>
+              <p class="stat-value">2 Jul 1997</p>
+              <p class="stat-copy">Thailand drops the baht’s peg to the US dollar.</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Indonesia, 1998</p>
+              <p class="stat-value">-13.13%</p>
+              <p class="stat-copy">Real GDP growth collapsed within a single year.</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Thailand Unemployment</p>
+              <p class="stat-value">0.87% → 3.40%</p>
+              <p class="stat-copy">World Bank data captures the social shock from 1997 to 1998.</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">IMF Support</p>
+              <p class="stat-value">$36bn</p>
+              <p class="stat-copy">Emergency financing to Indonesia, Korea, and Thailand.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="introduction" class="section intro reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Introduction</p>
+            <h2>High growth masked a fragile financial architecture</h2>
+          </div>
+          <div class="intro-grid">
+            <article class="panel">
+              <p>
+                The economies at the center of the crisis had posted years of rapid
+                growth and were widely treated as development success stories. The
+                report’s central argument is that those headline growth numbers hid a
+                more dangerous setup: banks borrowing in dollars, lending long in local
+                currency, and operating in systems with weak prudential oversight.
+              </p>
+              <p>
+                Once confidence broke, financing vanished, currencies fell, and balance
+                sheets that had looked manageable under fixed or tightly managed rates
+                became unworkable.
+              </p>
+            </article>
+            <article class="panel inset-panel">
+              <h3>Why this crisis still matters</h3>
+              <ul class="signal-list">
+                <li>It forced a rethink of capital flows and exchange rate regimes.</li>
+                <li>It exposed how moral hazard and weak governance amplify shocks.</li>
+                <li>It reshaped how the IMF designs crisis programs and social safeguards.</li>
+                <li>Its lessons still inform debates on emerging-market resilience.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="causes" class="section reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Causes</p>
+            <h2>The fault lines were visible before the collapse</h2>
+          </div>
+          <div class="fault-layout">
+            <div class="fault-cards" id="faultCards" role="tablist" aria-label="Key causes"></div>
+            <article class="fault-panel panel" id="faultPanel" aria-live="polite"></article>
+          </div>
+        </section>
+
+        <section class="section timeline-section reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Sequence Of Events</p>
+            <h2>Contagion moved faster than most policymakers expected</h2>
+          </div>
+          <div class="timeline-layout">
+            <div class="timeline-rail" id="timelineRail" aria-label="Crisis timeline"></div>
+            <article class="timeline-panel panel" id="timelinePanel" aria-live="polite"></article>
+          </div>
+        </section>
+
+        <section id="impact" class="section reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Impact</p>
+            <h2>Economic, financial, and social costs showed up across the region</h2>
+          </div>
+          <div class="dashboard panel">
+            <div class="dashboard-intro">
+              <p>
+                This section now uses all of the crisis statistics in the project data:
+                GDP growth, inflation, unemployment, current-account balance, and
+                exchange-rate pressure. The graphs are linked, so changing the metric,
+                year, or country updates the rest of the view.
+              </p>
+            </div>
+            <div class="dashboard-controls">
+              <div class="metric-group" id="metricButtons" aria-label="Metric selector"></div>
+              <div class="year-control">
+                <label for="yearSlider">Focus year</label>
+                <div class="year-readout">
+                  <strong id="yearValue">1998</strong>
+                  <span>Use the slider to inspect the crisis year by year.</span>
+                </div>
+                <input
+                  id="yearSlider"
+                  type="range"
+                  min="1995"
+                  max="2000"
+                  value="1998"
+                  step="1"
+                />
+              </div>
+            </div>
+
+            <div class="chart-layout">
+              <div class="chart-panel">
+                <div class="legend-row" id="countryLegend" aria-label="Country selector"></div>
+                <div class="chart-frame">
+                  <svg id="impactChart" viewBox="0 0 900 430" role="img" aria-label="Crisis comparison chart"></svg>
+                  <div id="chartTooltip" class="chart-tooltip" hidden></div>
+                </div>
+                <p class="chart-note" id="chartNote"></p>
+              </div>
+              <div class="snapshot-grid" id="snapshotGrid"></div>
+            </div>
+
+            <div class="impact-extras">
+              <section class="panel graph-wall-panel">
+                <div class="subsection-heading">
+                  <p class="eyebrow">Metric Wall</p>
+                  <h3>All five indicators at once</h3>
+                </div>
+                <p class="subsection-copy">
+                  Each card is a separate graph. Click any one to switch the main
+                  dashboard and comparison panels to that statistic.
+                </p>
+                <div class="metric-wall-grid" id="metricWall"></div>
+              </section>
+
+              <div class="impact-secondary-grid">
+                <section class="panel compare-panel">
+                  <div class="subsection-heading">
+                    <p class="eyebrow">Year Compare</p>
+                    <h3>Selected year across the region</h3>
+                  </div>
+                  <div class="chart-frame chart-frame-compact">
+                    <svg
+                      id="yearCompareChart"
+                      viewBox="0 0 760 330"
+                      role="img"
+                      aria-label="Selected year comparison chart"
+                    ></svg>
+                  </div>
+                  <div class="ranking-list" id="yearCompareRanking"></div>
+                  <p class="chart-note" id="yearCompareNote"></p>
+                </section>
+
+                <section class="panel country-profile-panel">
+                  <div class="subsection-heading">
+                    <p class="eyebrow">Country Profile</p>
+                    <h3>One country, every statistic</h3>
+                  </div>
+                  <div class="legend-row" id="countryProfileButtons" aria-label="Country profile selector"></div>
+                  <div class="country-profile-head" id="countryProfileHead"></div>
+                  <div class="country-metric-grid" id="countryMetricWall"></div>
+                </section>
+              </div>
+
+              <section class="panel heatmap-panel">
+                <div class="subsection-heading">
+                  <p class="eyebrow">Shock Matrix</p>
+                  <h3>Click any cell to jump the dashboard to that year and country</h3>
+                </div>
+                <p class="subsection-copy">
+                  The matrix below is synced to the currently selected metric, so it
+                  acts as a quick crisis scanner rather than a static table.
+                </p>
+                <div class="heatmap-legend" id="heatmapLegend"></div>
+                <div class="heatmap-grid" id="heatmapGrid" aria-label="Metric heatmap"></div>
+                <p class="chart-note" id="heatmapNote"></p>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section id="responses" class="section reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Responses</p>
+            <h2>Stabilisation came with trade-offs, and Malaysia chose a different route</h2>
+          </div>
+          <div class="responses-layout">
+            <div class="response-modes" id="responseModes" aria-label="Response comparison"></div>
+            <article class="response-panel panel" id="responsePanel" aria-live="polite"></article>
+          </div>
+        </section>
+
+        <section class="section lessons reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Conclusion</p>
+            <h2>The main lesson is not that growth failed, but that it hid leverage and fragility</h2>
+          </div>
+          <div class="lesson-grid">
+            <article class="panel lesson-card">
+              <h3>Rapid growth can conceal bad balance sheets</h3>
+              <p>
+                Growth above 7 percent did not offset the risks created by short-term
+                foreign borrowing and weak banking supervision.
+              </p>
+            </article>
+            <article class="panel lesson-card">
+              <h3>Exchange-rate regimes shape crisis dynamics</h3>
+              <p>
+                Pegged systems can reassure markets for a time, then intensify the
+                break once reserves and credibility run out.
+              </p>
+            </article>
+            <article class="panel lesson-card">
+              <h3>Crisis management is always a trade-off</h3>
+              <p>
+                IMF-backed adjustment restored confidence, but not without deep short-run
+                pain. Malaysia’s alternative reduced some of that pain while creating
+                different costs and controversies.
+              </p>
+            </article>
+            <article class="panel lesson-card">
+              <h3>The institutional reforms mattered</h3>
+              <p>
+                More flexible exchange rates, stronger supervision, and lower external
+                vulnerabilities made the region more resilient later on.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="sources" class="section reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Sources</p>
+            <h2>Report coverage plus official supporting evidence</h2>
+          </div>
+          <div class="sources-grid">
+            <article class="panel source-card">
+              <h3>Core report file</h3>
+              <p>
+                The site mirrors the structure and claims in your report, then layers in
+                outside evidence where it strengthens the argument.
+              </p>
+              <a href="./Report.docx">Open the report</a>
+            </article>
+            <article class="panel source-card">
+              <h3>IMF, 1998</h3>
+              <p>
+                Used for crisis causes, IMF package size, and the logic behind monetary,
+                fiscal, and banking-sector responses.
+              </p>
+              <a href="https://www.imf.org/external/pubs/ft/fandd/1998/06/imfstaff.htm" target="_blank" rel="noreferrer">
+                The Asian Crisis: Causes and Cures
+              </a>
+            </article>
+            <article class="panel source-card">
+              <h3>IMF, 2017</h3>
+              <p>
+                Used for the July 2, 1997 trigger date and the post-crisis reform legacy.
+              </p>
+              <a href="https://www.imf.org/en/blogs/articles/2017/07/13/what-we-have-seen-and-learned-20-years-after-the-asian-financial-crisis" target="_blank" rel="noreferrer">
+                20 Years After The Asian Financial Crisis
+              </a>
+            </article>
+            <article class="panel source-card">
+              <h3>IMF, 1999</h3>
+              <p>
+                Used for Malaysia’s September 1, 1998 capital controls and ringgit peg
+                at RM 3.8 per US dollar.
+              </p>
+              <a href="https://www.imf.org/en/publications/cr/issues/2016/12/30/malaysia-selected-issues-3227" target="_blank" rel="noreferrer">
+                Malaysia: Selected Issues
+              </a>
+            </article>
+            <article class="panel source-card">
+              <h3>World Bank Indicators</h3>
+              <p>
+                Used for GDP growth, inflation, unemployment, current-account balance,
+                and official exchange-rate data for Thailand, Indonesia, South Korea, and Malaysia.
+              </p>
+              <a href="https://api.worldbank.org/v2/country/THA;IDN;KOR;MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=400" target="_blank" rel="noreferrer">
+                World Bank API
+              </a>
+            </article>
+            <article class="panel source-card">
+              <h3>Report references</h3>
+              <p>
+                Additional references from the report include Yoshitomi and Ohno (1999),
+                OECD (2001), Fu (2024), Wang (2024), and Widianingsih (2025).
+              </p>
+              <a href="./asian_crisis_sources.md">Open the source log</a>
+            </article>
+          </div>
+          <p class="method-note">
+            Note: exchange-rate values are shown in the dashboard as a 1996-based index so
+            countries with different currency units can be compared on the same chart.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
